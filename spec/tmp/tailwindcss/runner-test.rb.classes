@@ -1,0 +1,9 @@
+bg-red
+text-white
+flex
+hover:bg-blue
+hover:sm:mt-10
+hover:after:p-10
+hover:after:lg:p-14
+before:content-[""]
+lg:mt-10

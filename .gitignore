@@ -1,0 +1,16 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+package.json
+yarn.lock
+node_modules/
+tailwind.config.js
+/public
+
+# rspec failure tracking
+.rspec_status
