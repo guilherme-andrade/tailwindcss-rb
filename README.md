@@ -187,21 +187,11 @@ tailwind(bg: :red, text: :white, _hover: { bg: :blue }, _before: { content: '[""
 
 ### Using arbitrary values
 
-When using arbitrary values, you have one of two options.
-
-1. Wrap the value in `[]` to use the value as is.
+When using arbitrary values, make sure to wrap the value in `[]` to use the value as is.
 
 ```ruby
 tailwind(bg: "[url('image.png')]")
 # => "bg-[url('image.png')]"
-```
-
-2. Use the `ab` method to add arbitrary values.
-
-```ruby
-include Tailwindcss::Helpers
-
-tailwind(bg: ab("url('image.png')"))
 ```
 
 ### Using color scheme values
