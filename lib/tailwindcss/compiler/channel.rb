@@ -17,11 +17,15 @@ module Tailwindcss
         output_file_name = Tailwindcss.resolve_setting(Tailwindcss.config.compiler.output_file_name)
         css_file = "#{output_file_name}.css"
         
-        if defined?(Rails) && Rails.respond_to?(:application) && Rails.application.respond_to?(:assets)
-          # Use Rails asset helpers if available
-          Rails.application.routes.url_helpers.asset_url(css_file)
+        if defined?(Rails) && Rails.application
+          # Use ActionController::Base helper which is available in Rails context
+          helpers = ActionController::Base.helpers
+          if helpers.respond_to?(:asset_path)
+            helpers.asset_path(css_file)
+          else
+            "/assets/#{css_file}"
+          end
         else
-          # Otherwise use relative path from assets directory
           "/assets/#{css_file}"
         end
       end

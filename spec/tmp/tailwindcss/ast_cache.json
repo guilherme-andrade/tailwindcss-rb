@@ -12,7 +12,7 @@
       "lg:mt-10"
     ],
     "mtime": 1755458099.2482197,
-    "accessed_at": 1755471523.7013361
+    "accessed_at": 1755471776.337644
   },
   "./spec/test/dummy_project/test.rb": {
     "classes": [
@@ -29,6 +29,6 @@
       "lg:mt-10"
     ],
     "mtime": 1755458099.2642875,
-    "accessed_at": 1755471523.703896
+    "accessed_at": 1755471776.340656
   }
 }
