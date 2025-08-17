@@ -89,7 +89,7 @@ module Tailwindcss
   end
 
   def compile_css!
-    Tailwindcss.config.logger.call.info "Recompiling Tailwindcss..."
+    log_info "Recompiling Tailwindcss..."
     system "npx tailwindcss -o #{output_path} -m"
     Compiler::Channel.broadcast_css_changed if defined?(ActionCable)
   end
@@ -106,5 +106,23 @@ module Tailwindcss
 
   def logger
     @logger ||= resolve_setting(config.logger)
+  rescue
+    nil
+  end
+  
+  def log_debug(message)
+    logger&.debug(message)
+  end
+  
+  def log_info(message)
+    logger&.info(message)
+  end
+  
+  def log_warn(message)
+    logger&.warn(message)
+  end
+  
+  def log_error(message)
+    logger&.error(message)
   end
 end

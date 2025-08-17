@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2024-08-17
+
+### Fixed
+- Fixed NoMethodError when ActionCable.server.logger is nil
+- Added safe logging methods (log_debug, log_info, log_warn, log_error)
+- Channel.broadcast_css_changed now handles errors gracefully
+- Logger initialization is now more robust
+
 ## [0.3.0] - 2024-08-17
 
 ### Added

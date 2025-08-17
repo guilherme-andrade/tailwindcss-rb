@@ -7,8 +7,18 @@ module Tailwindcss
       end
 
       def self.broadcast_css_changed
+        return unless defined?(ActionCable) && ActionCable.server
+        
         css_path = asset_url_for_css
-        ActionCable.server.broadcast("compiler_channel", {css_path:})
+        begin
+          ActionCable.server.broadcast("compiler_channel", {css_path:})
+        rescue => e
+          # Log the error if logger is available, otherwise silently fail
+          # ActionCable might not be fully configured in some environments
+          if Tailwindcss.respond_to?(:logger) && Tailwindcss.logger
+            Tailwindcss.logger.warn "Failed to broadcast CSS change: #{e.message}"
+          end
+        end
       end
       
       private
