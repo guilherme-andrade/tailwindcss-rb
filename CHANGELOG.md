@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2024-08-17
+
+### Fixed
+- Fixed undefined method `vite_asset_path` error in Compiler::Channel
+- Removed unnecessary AssetHelper dependency from Channel class
+- Channel now uses `Tailwindcss.tailwind_css_file_path` directly
+
 ## [0.2.1] - 2024-08-17
 
 ### Fixed
