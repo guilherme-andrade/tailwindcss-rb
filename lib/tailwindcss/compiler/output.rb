@@ -18,8 +18,7 @@ module Tailwindcss
       end
 
       def compile_classes_dir
-        dir = Tailwindcss.config.compiler.compile_classes_dir
-        dir = dir.respond_to?(:call) ? dir.call : dir
+        dir = Tailwindcss.resolve_setting(Tailwindcss.config.compiler.compile_classes_dir)
         absolute_path(dir)
       end
 
@@ -39,8 +38,7 @@ module Tailwindcss
       end
 
       def content
-        content_config = Tailwindcss.config.content
-        content_array = content_config.respond_to?(:call) ? content_config.call : content_config
+        content_array = Tailwindcss.resolve_setting(Tailwindcss.config.content)
         content_array.map { |path| absolute_path(path) }
       end
 

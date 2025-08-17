@@ -19,7 +19,8 @@ RSpec.describe Tailwindcss::Compiler::Runner, :aggregate_failures do
   before :all do
     Tailwindcss.configure do |config|
       config.content = proc { ["./spec/test/dummy_project"] }
-      config.compiler.output_path = proc { "./spec/tmp/tailwindcss/styles.css" }
+      config.compiler.assets_path = proc { "./spec/tmp/tailwindcss" }
+      config.compiler.output_file_name = proc { "styles" }
       config.compiler.compile_classes_dir = proc { "./spec/tmp/tailwindcss" }
       config.theme.color_scheme = {
         primary: :red,

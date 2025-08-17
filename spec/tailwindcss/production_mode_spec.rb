@@ -220,7 +220,8 @@ RSpec.describe "Tailwindcss in Production Mode" do
 
       Tailwindcss.configure do |config|
         config.mode = :production
-        config.compiler.output_path = output_path
+        config.compiler.assets_path = temp_dir
+        config.compiler.output_file_name = "styles"
       end
 
       # Manual compilation should still be possible

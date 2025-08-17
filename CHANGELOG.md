@@ -7,12 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.2] - 2024-08-17
+## [0.3.0] - 2024-08-17
+
+### Added
+- New `resolve_setting` helper method for cleaner configuration value resolution
+- Separate `assets_path` and `output_file_name` configuration options (replaces single `output_path`)
+
+### Changed
+- **BREAKING**: Configuration now uses `compiler.assets_path` and `compiler.output_file_name` instead of `compiler.output_path`
+- Channel broadcasts proper asset URLs (Rails asset_url when available, relative path otherwise)
+- Refactored all configuration resolution to use consistent `resolve_setting` method
 
 ### Fixed
 - Fixed undefined method `vite_asset_path` error in Compiler::Channel
 - Removed unnecessary AssetHelper dependency from Channel class
-- Channel now uses `Tailwindcss.tailwind_css_file_path` directly
+- Channel now broadcasts web-accessible asset paths instead of file system paths
 
 ## [0.2.1] - 2024-08-17
 

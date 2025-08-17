@@ -24,13 +24,14 @@ module Tailwindcss
   setting :package_json_path, default: proc { "./package.json" }
   setting :config_file_path, default: proc { "./tailwind.config.js" }
   setting :compiler do
-    setting :output_path, default: proc { "./public/assets/styles.css" }
+    setting :assets_path, default: proc { "./public/assets" }
+    setting :output_file_name, default: proc { "styles" }
     setting :compile_classes_dir, default: proc { "./tmp/tailwindcss" }
   end
   setting :content, default: proc { [] }
   setting :prefix, default: ""
 
-  setting :tailwind_css_file_path, default: proc { Tailwindcss.config.compiler.output_path.call }
+  setting :tailwind_css_file_path, default: proc { Tailwindcss.output_path }
   setting :tailwind_config_overrides, default: proc { {} }
   setting :watch_content, default: false
 
@@ -56,7 +57,7 @@ module Tailwindcss
   config.extend ExtendTheme
 
   def theme
-    @theme ||= OpenStruct.new(config.theme.to_h.transform_values { _1.respond_to?(:call) ? _1.call : _1 })
+    @theme ||= OpenStruct.new(config.theme.to_h.transform_values { |v| resolve_setting(v) })
   end
 
   def configure(&blk)
@@ -75,10 +76,12 @@ module Tailwindcss
     Compiler::Runner.new.call
   end
 
+  def resolve_setting(setting)
+    setting.respond_to?(:call) ? setting.call : setting
+  end
+  
   def production_mode?
-    mode = config.mode
-    mode = mode.call if mode.respond_to?(:call)
-    mode == :production
+    resolve_setting(config.mode) == :production
   end
 
   def development_mode?
@@ -92,16 +95,16 @@ module Tailwindcss
   end
 
   def output_path
-    path = Tailwindcss.config.compiler.output_path
-    path.respond_to?(:call) ? path.call : path
+    assets_path = resolve_setting(config.compiler.assets_path)
+    output_file_name = resolve_setting(config.compiler.output_file_name)
+    File.join(assets_path, "#{output_file_name}.css")
   end
 
   def tailwind_css_file_path
-    path = Tailwindcss.config.tailwind_css_file_path
-    @tailwind_css_file_path ||= path.respond_to?(:call) ? path.call : path
+    @tailwind_css_file_path ||= resolve_setting(config.tailwind_css_file_path)
   end
 
   def logger
-    @logger ||= config.logger.call
+    @logger ||= resolve_setting(config.logger)
   end
 end

@@ -30,8 +30,7 @@ module Tailwindcss
       private
 
       def default_cache_dir
-        dir = Tailwindcss.config.compiler.compile_classes_dir
-        dir.respond_to?(:call) ? dir.call : dir
+        Tailwindcss.resolve_setting(Tailwindcss.config.compiler.compile_classes_dir)
       end
 
       def load_cache

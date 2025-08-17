@@ -56,7 +56,7 @@ module Tailwindcss
       attr_reader :watch
 
       def content
-        Tailwindcss.config.content.respond_to?(:call) ? Tailwindcss.config.content.call : Tailwindcss.config.content
+        Tailwindcss.resolve_setting(Tailwindcss.config.content)
       end
     end
   end

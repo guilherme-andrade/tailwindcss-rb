@@ -123,7 +123,8 @@ RSpec.describe "Tailwindcss in Development Mode" do
 
       Tailwindcss.configure do |config|
         config.mode = :development
-        config.compiler.output_path = output_path
+        config.compiler.assets_path = temp_dir
+        config.compiler.output_file_name = "styles"
       end
 
       expect(Tailwindcss).to receive(:system).with(/npx tailwindcss.*-o.*#{output_path}/)
