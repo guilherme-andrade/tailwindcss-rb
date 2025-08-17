@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2024-08-17
+
+### Fixed
+- Fixed Channel reference in compile_css! method to use correct namespace (Compiler::Channel)
+
 ## [0.2.0] - 2024-08-17
 
 ### Added

@@ -88,7 +88,7 @@ module Tailwindcss
   def compile_css!
     Tailwindcss.config.logger.call.info "Recompiling Tailwindcss..."
     system "npx tailwindcss -o #{output_path} -m"
-    Channel.broadcast_css_changed if defined?(ActionCable)
+    Compiler::Channel.broadcast_css_changed if defined?(ActionCable)
   end
 
   def output_path
