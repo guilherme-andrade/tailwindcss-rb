@@ -8,7 +8,7 @@ module Tailwindcss
         return if classes.blank?
 
         path = output_file_path(file_path:)
-        folder = create_output_folder(file_path: path)
+        create_output_folder(file_path: path)
 
         path += ".classes"
         File.open(path, "wb") do |file|
@@ -18,7 +18,9 @@ module Tailwindcss
       end
 
       def compile_classes_dir
-        absolute_path(Tailwindcss.config.compiler.compile_classes_dir.call)
+        dir = Tailwindcss.config.compiler.compile_classes_dir
+        dir = dir.respond_to?(:call) ? dir.call : dir
+        absolute_path(dir)
       end
 
       def create_output_folder(file_path:)
@@ -33,11 +35,13 @@ module Tailwindcss
           end
         end
 
-        return nil
+        nil
       end
 
       def content
-        Tailwindcss.config.content.call.map { |path| absolute_path(path) }
+        content_config = Tailwindcss.config.content
+        content_array = content_config.respond_to?(:call) ? content_config.call : content_config
+        content_array.map { |path| absolute_path(path) }
       end
 
       def absolute_path(path)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Tailwindcss
   class ArbitraryValue
     def initialize(value)

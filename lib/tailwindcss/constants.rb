@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 module Tailwindcss
   module Constants
     COLOR_WEIGHTS = ([nil] + %i[50 100 200 300 400 500 600 700 800 900]).freeze
     BREAKPOINTS = %i[xs sm md lg xl 2xl].freeze
-    PSEUDO_SELECTORS = %i[hover focus active visited disabled first last first_of_type last_of_type odd even group_hover].freeze
+    PSEUDO_SELECTORS = %i[hover focus active visited disabled first last first_of_type last_of_type odd even
+      group_hover].freeze
     PSEUDO_ELEMENTS = %i[before after file first_letter first_line selection backdrop marker].freeze
 
     ALIGN_CONTENT = %i[normal center start end between around evenly baseline stretch].freeze
@@ -121,7 +124,10 @@ module Tailwindcss
     TEXT_UNDERLINE_OFFSET = %i[auto 0 1 2 4 8].freeze
     TRANSFORM_ORIGIN = %i[center top-right top top-left right bottom-right bottom bottom-left left].freeze
     TRANSITION = %i[none all colors opacity shadow transform].freeze
-    TRANSLATE = %i[0 0.5 px 1 1.5 2 2.5 3 3.5 4 5 6 7 8 9 10 11 12 14 16 20 24 28 32 36 40 44 48 52 56 60 64 72 80 96 1/2 1/3 2/3 1/4 2/3 2/4 3/4 full].map { [_1, :"-#{_1}"] }.flatten.freeze
+    TRANSLATE = %i[0 0.5 px 1 1.5 2 2.5 3 3.5 4 5 6 7 8 9 10 11 12 14 16 20 24 28 32 36 40 44 48 52 56 60 64 72 80 96
+      1/2 1/3 2/3 1/4 2/3 2/4 3/4 full].map do
+      [_1, :"-#{_1}"]
+    end.flatten.freeze
     USER_SELECT = %i[none text all auto].freeze
     VERTICAL_ALIGN = %i[top middle bottom baseline text-top text-bottom sub super].freeze
     VISIBILITY = %i[visible invisible collapse].freeze
@@ -181,7 +187,7 @@ module Tailwindcss
       box_sizing: {values: BOX_SIZING, token: "box"},
       caption_side: {values: CAPTION_SIDE, token: "caption"},
       clear: {values: CLEAR, token: "clear"},
-      color: {values: COLOR_WITH_WEIGHTS, token: "text"},
+      color: {values: COLOR_WITH_WEIGHTS, token: "text", alias: :text},
       column_gap: {values: SPACING, token: "gap"},
       column_span: {values: COLUMN_SPAN, token: "col-span", alias: :col_span},
       column_start: {values: COLUMN_START, token: "col-start", alias: :col_start},
@@ -265,7 +271,9 @@ module Tailwindcss
       position: {values: POSITION, token: nil},
       resize: {values: RESIZE, token: "resize"},
       right: {values: SIZES, token: "right"},
-      rotate: {values: ROTATE, token: proc { _1.to_s.start_with?("-") ? "-rotate-#{_1.to_s[1..-1]}" : "rotate-#{_1}" }},
+      rotate: {values: ROTATE, token: proc {
+        _1.to_s.start_with?("-") ? "-rotate-#{_1.to_s[1..]}" : "rotate-#{_1}"
+      }},
       row_gap: {values: SPACING, token: "gap"},
       row_span: {values: ROW_SPAN, token: "row-span"},
       row_start: {values: ROW_START, token: "row-start"},
@@ -307,8 +315,12 @@ module Tailwindcss
       top: {values: SIZES, token: "top"},
       transform_origin: {values: TRANSFORM_ORIGIN, token: "origin"},
       transition: {values: TRANSITION + [true], token: "transition"},
-      translate_x: {values: TRANSLATE, token: proc { _1.to_s.start_with?("-") ? "-translate-#{_1.to_s[1..-1]}" : "translate-#{_1}" }},
-      translate_y: {values: TRANSLATE, token: proc { _1.to_s.start_with?("-") ? "-translate-y-#{_1.to_s[1..-1]}" : "translate-y-#{_1}" }},
+      translate_x: {values: TRANSLATE, token: proc {
+        _1.to_s.start_with?("-") ? "-translate-#{_1.to_s[1..]}" : "translate-#{_1}"
+      }},
+      translate_y: {values: TRANSLATE, token: proc {
+        _1.to_s.start_with?("-") ? "-translate-y-#{_1.to_s[1..]}" : "translate-y-#{_1}"
+      }},
       user_select: {values: USER_SELECT, token: "select"},
       vertical_align: {values: VERTICAL_ALIGN, token: "align"},
       visibility: {values: VISIBILITY, token: nil},

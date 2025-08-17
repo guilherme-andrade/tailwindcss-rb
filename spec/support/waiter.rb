@@ -1,14 +1,14 @@
+# frozen_string_literal: true
+
 module Waiter
-  extend self
+  module_function
 
   def wait_until(timeout:, &block)
     Timeout.timeout(timeout) do
       loop do
-        begin
-          break if block.call
-        rescue StandardError
-          next
-        end
+        break if block.call
+      rescue
+        next
       end
     end
   end

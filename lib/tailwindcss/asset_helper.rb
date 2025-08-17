@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Tailwindcss
   module AssetHelper
     include ActionView::Helpers::AssetTagHelper
 
-    extend self
+    module_function
 
     def tailwind_stylesheet_path
       Tailwindcss.tailwind_css_file_path

@@ -1,4 +1,3 @@
-
 require "listen"
 require "tailwindcss"
 require "tailwindcss/compiler/file_classes_extractor"

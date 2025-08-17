@@ -184,6 +184,96 @@ tailwind(bg: :red, text: :white, _hover: { bg: :blue }, _before: { content: '[""
 # => "bg-red-500 text-white hover:bg-blue-500 before:content-[\"\"]"
 ```
 
+### Dark Mode Support
+
+Use the `dark()` helper for cleaner dark mode styling:
+
+```ruby
+# Basic dark mode
+tailwind(bg: :white, text: :black, **dark(bg: :gray, text: :white))
+# => "bg-white text-black dark:bg-gray-500 dark:text-white"
+
+# Nested modifiers with dark mode
+tailwind(
+  bg: :white,
+  **dark(
+    bg: :gray,
+    _hover: { bg: :blue }
+  )
+)
+# => "bg-white dark:bg-gray-500 dark:hover:bg-blue-500"
+```
+
+### Responsive Design
+
+Use the `at()` helper for responsive breakpoints:
+
+```ruby
+# Responsive padding
+tailwind(p: 2, **at(:md, p: 4), **at(:lg, p: 6))
+# => "p-2 md:p-4 lg:p-6"
+
+# Combine responsive with dark mode
+tailwind(**at(:lg, **dark(bg: :black)))
+# => "lg:dark:bg-black"
+```
+
+### Style Composition
+
+The `Style` class supports powerful composition patterns:
+
+```ruby
+# Merge styles
+base_button = Tailwindcss::Style.new(px: 4, py: 2, rounded: :md)
+primary_button = base_button.merge(bg: :blue, text: :white)
+
+# Use + operator
+large_button = primary_button + Tailwindcss::Style.new(px: 6, py: 3)
+
+# Override specific attributes
+modified = primary_button.with(bg: :green)
+
+# Remove attributes
+minimal = primary_button.except(:rounded)
+
+# Check if empty
+style = Tailwindcss::Style.new
+style.empty? # => true
+```
+
+### Component Pattern Example
+
+```ruby
+class ButtonComponent
+  include Tailwindcss::Helpers
+
+  def self.style(variant: :primary, size: :md, **custom)
+    base = Tailwindcss::Style.new(
+      px: 4, py: 2, 
+      rounded: :md, 
+      font: :medium
+    )
+    
+    variants = {
+      primary: { bg: :blue, text: :white },
+      secondary: { bg: :gray, text: :black }
+    }
+    
+    sizes = {
+      sm: { px: 3, py: 1, text: :sm },
+      md: { px: 4, py: 2, text: :base },
+      lg: { px: 6, py: 3, text: :lg }
+    }
+    
+    base.merge(variants[variant])
+        .merge(sizes[size])
+        .merge(custom)
+  end
+end
+
+# Usage
+button = ButtonComponent.style(variant: :primary, size: :lg, shadow: :xl)
+```
 
 ### Using arbitrary values
 
@@ -217,6 +307,216 @@ Optionally, you can specify a shade.
 tailwind(bg: color_scheme_token(:primary, 100))
 # => "bg-red-100"
 ```
+
+## Building Reusable Components
+
+### Creating a Card Component
+
+```ruby
+class CardComponent
+  include Tailwindcss::Helpers
+
+  attr_reader :style
+
+  def initialize(elevated: false, dark_mode: true)
+    @style = base_style
+    @style = @style.merge(elevation_style) if elevated
+    @style = @style.merge(dark_mode_style) if dark_mode
+  end
+
+  private
+
+  def base_style
+    Tailwindcss::Style.new(
+      bg: :white,
+      rounded: :lg,
+      p: 6,
+      border: true,
+      border_gray: 200
+    )
+  end
+
+  def elevation_style
+    { shadow: :xl, border: false }
+  end
+
+  def dark_mode_style
+    dark(
+      bg: :gray_800,
+      border_gray: 700,
+      text: :gray_100
+    )
+  end
+end
+
+# Usage in views
+card = CardComponent.new(elevated: true)
+content_tag :div, class: card.style.to_s do
+  # content
+end
+```
+
+### Creating a Form Input Component
+
+```ruby
+class FormInputComponent
+  include Tailwindcss::Helpers
+
+  STATES = {
+    default: { border_gray: 300, focus: { border_blue: 500, ring_blue: 500 } },
+    error: { border_red: 500, focus: { border_red: 500, ring_red: 500 } },
+    success: { border_green: 500, focus: { border_green: 500, ring_green: 500 } }
+  }.freeze
+
+  def self.style(state: :default, size: :md)
+    base = Tailwindcss::Style.new(
+      block: true,
+      w: :full,
+      rounded: :md,
+      border: true,
+      shadow: :sm,
+      _focus: { ring: 2, ring_offset: 2, outline: :none }
+    )
+
+    sizes = {
+      sm: { px: 3, py: 1.5, text: :sm },
+      md: { px: 4, py: 2, text: :base },
+      lg: { px: 4, py: 3, text: :lg }
+    }
+
+    base.merge(STATES[state])
+        .merge(sizes[size])
+        .merge(dark(
+          bg: :gray_700,
+          border_gray: 600,
+          text: :white
+        ))
+  end
+end
+
+# Usage
+input_class = FormInputComponent.style(state: :error, size: :lg).to_s
+```
+
+### Alert Component with Variants
+
+```ruby
+class AlertComponent
+  include Tailwindcss::Helpers
+
+  def initialize(type: :info, dismissible: false)
+    @type = type
+    @dismissible = dismissible
+  end
+
+  def style
+    base_style
+      .merge(type_styles[@type])
+      .merge(dark_styles)
+      .tap { |s| s.merge!(dismissible_styles) if @dismissible }
+  end
+
+  private
+
+  def base_style
+    Tailwindcss::Style.new(
+      p: 4,
+      rounded: :lg,
+      border_l: 4,
+      mb: 4
+    )
+  end
+
+  def type_styles
+    {
+      info: { bg: :blue_50, border_blue: 400, text: :blue_800 },
+      success: { bg: :green_50, border_green: 400, text: :green_800 },
+      warning: { bg: :yellow_50, border_yellow: 400, text: :yellow_800 },
+      error: { bg: :red_50, border_red: 400, text: :red_800 }
+    }
+  end
+
+  def dark_styles
+    dark(bg: :gray_800, text: :gray_100)
+  end
+
+  def dismissible_styles
+    { relative: true, pr: 12 }
+  end
+end
+```
+
+## Tips and Best Practices
+
+### 1. Use Composition Over Repetition
+
+```ruby
+# Good - Reusable styles
+button_base = Tailwindcss::Style.new(px: 4, py: 2, rounded: :md)
+primary = button_base.merge(bg: :blue, text: :white)
+secondary = button_base.merge(bg: :gray, text: :black)
+
+# Avoid - Repetitive
+primary = tailwind(px: 4, py: 2, rounded: :md, bg: :blue, text: :white)
+secondary = tailwind(px: 4, py: 2, rounded: :md, bg: :gray, text: :black)
+```
+
+### 2. Organize Responsive Styles
+
+```ruby
+# Clean responsive progression
+tailwind(
+  text: :sm,                    # Mobile first
+  **at(:md, text: :base),       # Tablet
+  **at(:lg, text: :lg),         # Desktop
+  **at(:xl, text: :xl)          # Large screens
+)
+```
+
+### 3. Dark Mode Best Practices
+
+```ruby
+# Group dark mode styles together
+tailwind(
+  # Light mode
+  bg: :white,
+  text: :gray_900,
+  border: :gray_200,
+  
+  # Dark mode as a unit
+  **dark(
+    bg: :gray_900,
+    text: :gray_100,
+    border: :gray_700
+  )
+)
+```
+
+### 4. Performance Tips
+
+- Keep your `config.content` paths specific to files that actually use Tailwind
+- The library caches parsed files automatically for faster subsequent builds
+- Use watch mode during development for instant feedback
+
+## Troubleshooting
+
+### Classes not appearing in CSS
+
+1. Ensure your file is in the configured content paths
+2. Check that you're using the `tailwind()` helper (not plain strings)
+3. Clear the cache if needed: `rm -rf tmp/tailwindcss/*.json`
+
+### Compilation is slow
+
+- Reduce the number of files in `config.content`
+- Ensure the cache directory is writable
+- Use watch mode to avoid full recompilations
+
+### Dark mode not working
+
+- Verify your Tailwind config has dark mode enabled
+- Use the `dark()` helper for proper class generation
+- Check your HTML has the `dark` class or uses media queries
 
 ## Contributing
 

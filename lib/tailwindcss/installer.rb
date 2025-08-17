@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "tailwindcss/installers/config_file_generator"
 
 module Tailwindcss
@@ -10,7 +12,7 @@ module Tailwindcss
     private
 
     def install_packages
-      system("yarn init -y") unless File.exist?('./package.json')
+      system("yarn init -y") unless File.exist?("./package.json")
       system("yarn add -D tailwindcss autoprefixer postcss")
     end
   end

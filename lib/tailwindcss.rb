@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "dry/configurable"
 require "deep_merge/rails_compat"
 
@@ -8,7 +10,16 @@ require "tailwindcss/compiler/runner"
 module Tailwindcss
   extend Dry::Configurable
   include Constants
-  extend self
+
+  module_function
+
+  setting :mode, default: proc {
+    if ENV["RAILS_ENV"] == "production" || ENV["RACK_ENV"] == "production"
+      :production
+    else
+      :development
+    end
+  }
 
   setting :package_json_path, default: proc { "./package.json" }
   setting :config_file_path, default: proc { "./tailwind.config.js" }
@@ -34,7 +45,7 @@ module Tailwindcss
     setting :color_scheme, default: proc { COLOR_SCHEME }
   end
 
-  setting :logger, default: proc { Logger.new(STDOUT) }
+  setting :logger, default: proc { Logger.new($stdout) }
 
   module ExtendTheme
     def extend_theme(**overrides)
@@ -45,17 +56,33 @@ module Tailwindcss
   config.extend ExtendTheme
 
   def theme
-    @theme ||= OpenStruct.new(self.config.theme.to_h.transform_values { _1.respond_to?(:call) ? _1.() : _1 })
+    @theme ||= OpenStruct.new(config.theme.to_h.transform_values { _1.respond_to?(:call) ? _1.call : _1 })
   end
 
   def configure(&blk)
-    super(&blk)
+    super
+    @theme = nil  # Clear cached theme
     init!
   end
 
   def init!
     require "tailwindcss/style"
+    @theme = nil  # Clear cached theme
+
+    # Skip compilation in production mode
+    return if production_mode?
+
     Compiler::Runner.new.call
+  end
+
+  def production_mode?
+    mode = config.mode
+    mode = mode.call if mode.respond_to?(:call)
+    mode == :production
+  end
+
+  def development_mode?
+    !production_mode?
   end
 
   def compile_css!
@@ -65,11 +92,13 @@ module Tailwindcss
   end
 
   def output_path
-    @output_path ||= Tailwindcss.config.compiler.output_path.call
+    path = Tailwindcss.config.compiler.output_path
+    path.respond_to?(:call) ? path.call : path
   end
 
   def tailwind_css_file_path
-    @tailwind_css_file_path ||= Tailwindcss.config.tailwind_css_file_path.call
+    path = Tailwindcss.config.tailwind_css_file_path
+    @tailwind_css_file_path ||= path.respond_to?(:call) ? path.call : path
   end
 
   def logger

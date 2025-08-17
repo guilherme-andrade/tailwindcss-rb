@@ -1,5 +1,7 @@
-require 'active_support/core_ext/object/blank'
-require 'tailwindcss/helpers'
+# frozen_string_literal: true
+
+require "active_support/core_ext/object/blank"
+require "tailwindcss/helpers"
 
 module Tailwindcss
   module Compiler
@@ -14,9 +16,7 @@ module Tailwindcss
         hash_args = []
         return unless node.is_a?(Parser::AST::Node)
 
-        if node.type == :send
-          hash_args += extract_hashes(node).flatten(10)
-        end
+        hash_args += extract_hashes(node).flatten(10) if node.type == :send
 
         node.children.each do |child|
           next unless child.is_a?(Parser::AST::Node)
@@ -51,13 +51,13 @@ module Tailwindcss
         when :hash
           hashes = []
           extract_value(value_node, hashes)
-          hashes.flatten.map { |h| { key.to_sym => h } }
+          hashes.flatten.map { |h| {key.to_sym => h} }
         when :int, :str, :sym, :float
-          { key.to_sym => node_text(value_node) }
-        when :true
-          { key.to_sym => true }
-        when :false
-          { key.to_sym => false }
+          {key.to_sym => node_text(value_node)}
+        when :true # standard:disable Lint/BooleanSymbol
+          {key.to_sym => true}
+        when :false # standard:disable Lint/BooleanSymbol
+          {key.to_sym => false}
         else
           extract_color_scheme_calls(key_node, value_node)
         end
@@ -65,24 +65,47 @@ module Tailwindcss
 
       def extract_color_scheme_calls(key_node, value_node)
         value = source_code(value_node)
-        return unless value.include?('color_scheme_token') || value.include?('color_token')
+        return unless value.include?("color_scheme_token") || value.include?("color_token")
 
         weight_node = value_node.children[3]
-        weight = weight_node ? eval(source_code(weight_node)) : 500
+        weight = weight_node ? safe_eval(source_code(weight_node), 500) : 500
 
-        if value.include?('color_scheme_token')
-          color_scheme_token = eval(source_code(value_node.children[2]))
+        if value.include?("color_scheme_token")
+          color_scheme_token = safe_eval(source_code(value_node.children[2]), nil)
+          return unless color_scheme_token
+
           color = Tailwindcss::Helpers.color_scheme_token(color_scheme_token, weight)
-        elsif value.include?('color_token')
-          color_token = eval(source_code(value_node.children[2]))
+        elsif value.include?("color_token")
+          color_token = safe_eval(source_code(value_node.children[2]), nil)
+          return unless color_token
+
           color = Tailwindcss::Helpers.color_token(color_token, weight)
         end
 
-        { source_code(key_node).to_sym => color }
+        {source_code(key_node).to_sym => color}
+      rescue => e
+        Tailwindcss.logger.debug "Failed to extract color scheme call: #{e.message}"
+        nil
+      end
+
+      def safe_eval(code, default)
+        # Only allow simple literals and symbols for safety
+        return default unless code.match?(/\A[:'"a-zA-Z0-9_]+\z/)
+
+        eval(code) # standard:disable Security/Eval
+      rescue
+        default
       end
 
       def node_text(node)
-        source_code(node).delete(':').delete('\'').to_s
+        text = source_code(node)
+        # Remove leading colon for symbols
+        text = text[1..] if text.start_with?(":")
+        # Remove quotes for strings but preserve content
+        if (text.start_with?('"') && text.end_with?('"')) || (text.start_with?("'") && text.end_with?("'"))
+          text = text[1..-2]
+        end
+        text
       end
 
       def source_code(node)

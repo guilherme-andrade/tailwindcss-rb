@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "tailwindcss"
 require "dry/configurable/test_interface"
 
@@ -36,8 +38,7 @@ RSpec.describe Tailwindcss::Compiler::Runner, :aggregate_failures do
       expect(File.exist?("./spec/tmp/tailwindcss/test.rb.classes")).to be_truthy
       expect(classes_content.split(/\s/)).to match_array(%w[bg-red text-red-100 border-blue-500 hover:bg-blue
         hover:sm:mt-10 hover:after:p-10 flex decoration-red-500
-        hover:after:lg:p-14 before:content-[""] lg:mt-10]
-      )
+        hover:after:lg:p-14 before:content-[""] lg:mt-10])
     end
 
     context "when the file changes and watch_content is enabled" do

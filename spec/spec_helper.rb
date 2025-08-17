@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "tailwindcss"
+require "pry"
 
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 

@@ -1,0 +1,14 @@
+# StandardRB configuration
+# StandardRB is more lenient than RuboCop and focuses on consistency
+# https://github.com/standardrb/standard
+
+# Specify Ruby version
+ruby_version: 3.1
+
+# Ignore certain files and directories
+ignore:
+  - 'vendor/**/*'
+  - 'node_modules/**/*'
+  - 'tmp/**/*'
+  - 'bin/**/*'
+  - 'spec/test/**/*'  # Test fixtures can have different styles

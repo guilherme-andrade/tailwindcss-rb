@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 namespace :tailwindcss do
   desc "Generate TailwindCSS configuration file"

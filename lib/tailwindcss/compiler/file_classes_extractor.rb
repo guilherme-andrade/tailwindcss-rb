@@ -3,22 +3,28 @@ module Tailwindcss
     class FileClassesExtractor
       require "tailwindcss/compiler/output"
       require "tailwindcss/compiler/file_parser"
+      require "tailwindcss/compiler/ast_cache"
 
-      def call(file_path:)
-        ast = file_parser.call(file_path:)
-        return unless ast
-
-        hash_args = hash_args_extractor.call(ast:)
-        hash_args.map { class_list_builder.call(**_1) }.flatten.compact
+      def initialize
+        @cache = AstCache.new
+        @file_parser = FileParser.new
+        @hash_args_extractor = HashArgsExtractor.new
+        @class_list_builder = StyleAttributesToListConverter.new
       end
 
-      private
+      def call(file_path:)
+        @cache.fetch(file_path) do
+          ast = @file_parser.call(file_path:)
+          next unless ast
 
-      def hash_args_extractor = HashArgsExtractor.new
+          hash_args = @hash_args_extractor.call(ast:)
+          hash_args.map { @class_list_builder.call(**_1) }.flatten.compact
+        end
+      end
 
-      def file_parser = FileCompiler.new
-
-      def class_list_builder = StyleAttributesToListConverter.new
+      def clear_cache
+        @cache.clear
+      end
     end
   end
 end
