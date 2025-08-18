@@ -1,0 +1,27 @@
+<%# Card component template %>
+<% card = CardComponent.new %>
+
+<div class="<%= card.wrapper_classes %> <%= card.dark_wrapper_classes %> <%= card.responsive_padding %>">
+  <% if local_assigns[:title] %>
+    <h2 class="<%= card.header_classes %>">
+      <%= title %>
+    </h2>
+  <% end %>
+  
+  <div class="<%= card.body_classes %>">
+    <%= yield %>
+  </div>
+  
+  <% if local_assigns[:footer] %>
+    <div class="<%= card.footer_classes %>">
+      <%= footer %>
+    </div>
+  <% end %>
+</div>
+
+<%# Test inline styles %>
+<div class="<%= style(mt: 4, space_y: 2) %>">
+  <p class="<%= style(text: :sm, text_color: :gray._(500)) %>">
+    Additional content
+  </p>
+</div>

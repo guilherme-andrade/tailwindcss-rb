@@ -1,8 +1,8 @@
 PATH
   remote: ../..
   specs:
-    tailwindcss-rb (0.3.1)
-      activesupport (~> 7.0)
+    tailwindcss-rb (0.3.2)
+      activesupport (>= 6.0)
       deep_merge (~> 1.0)
       dry-configurable (~> 1.0)
       dry-initializer (~> 3.0)
@@ -177,7 +177,7 @@ GEM
     psych (5.2.6)
       date
       stringio
-    puma (5.6.9)
+    puma (6.6.1)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.1.16)
@@ -276,8 +276,8 @@ PLATFORMS
 
 DEPENDENCIES
   debug
-  puma (~> 5.0)
-  rails (~> 7.0)
+  puma (~> 6.0)
+  rails (>= 6.0)
   rspec-rails
   sqlite3 (~> 1.4)
   tailwindcss-rb!

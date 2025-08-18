@@ -1,0 +1,14 @@
+<%# Test ERB template for compiler %>
+<% button = ButtonComponent.new(variant: local_assigns[:variant] || :primary, size: local_assigns[:size] || :md) %>
+
+<button class="<%= button.style_classes %> <%= style(disabled: { opacity: 50, cursor: :not_allowed }) if local_assigns[:disabled] %>">
+  <%= content || "Click me" %>
+</button>
+
+<% if local_assigns[:with_icon] %>
+  <span class="<%= style(inline: :flex, items: :center, gap: 2) %>">
+    <svg class="<%= style(w: 4, h: 4) %>">
+      <!-- Icon content -->
+    </svg>
+  </span>
+<% end %>

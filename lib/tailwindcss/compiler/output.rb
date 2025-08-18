@@ -28,18 +28,30 @@ module Tailwindcss
       end
 
       def output_file_path(file_path:)
-        content.each do |folder|
-          if file_path.start_with?(folder)
-            return File.join(compile_classes_dir, file_path.delete_prefix(folder.to_s))
+        # For each content pattern, find the base directory
+        content_base_dirs.each do |base_dir|
+          if file_path.start_with?(base_dir)
+            relative_path = file_path.delete_prefix(base_dir).delete_prefix("/")
+            return File.join(compile_classes_dir, relative_path)
           end
         end
 
-        nil
+        # Fallback: use just the filename
+        File.join(compile_classes_dir, File.basename(file_path))
       end
 
       def content
         content_array = Tailwindcss.resolve_setting(Tailwindcss.config.content)
         content_array.map { |path| absolute_path(path) }
+      end
+      
+      def content_base_dirs
+        # Extract base directories from content patterns
+        Tailwindcss.resolve_setting(Tailwindcss.config.content).map do |pattern|
+          # Remove glob patterns to get base directory
+          base = pattern.to_s.gsub(/\*\*\/\*.*$/, '').gsub(/\*.*$/, '')
+          absolute_path(base)
+        end.uniq
       end
 
       def absolute_path(path)

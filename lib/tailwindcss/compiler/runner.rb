@@ -17,28 +17,44 @@ module Tailwindcss
         file_classes_extractor = FileClassesExtractor.new
 
         content.each do |location|
+          # Handle glob patterns vs directory paths
+          location_str = location.to_s
+          
+          # Extract base directory for watching
+          watch_dir = location_str.gsub(/\*.*$/, '').chomp('/')
+          
           if watch || (watch.nil? && Tailwindcss.config.watch_content)
-            listener = Listen.to(File.dirname(location.to_s), only: /\.(rb|erb)$/) do |modified, added, removed|
-              Tailwindcss.logger.info "Recompiling Tailwindcss..."
-              Tailwindcss.logger.info "Modified: #{modified}"
-              Tailwindcss.logger.info "Added: #{added}"
-              Tailwindcss.logger.info "Removed: #{removed}"
-              (modified + added + removed).compact.each do |file_path|
-                next unless File.file?(file_path)
+            if Dir.exist?(watch_dir)
+              listener = Listen.to(watch_dir, only: /\.(rb|erb)$/) do |modified, added, removed|
+                Tailwindcss.logger.info "Recompiling Tailwindcss..."
+                Tailwindcss.logger.info "Modified: #{modified}"
+                Tailwindcss.logger.info "Added: #{added}"
+                Tailwindcss.logger.info "Removed: #{removed}"
+                (modified + added + removed).compact.each do |file_path|
+                  next unless File.file?(file_path)
 
-                classes = file_classes_extractor.call(file_path:)
-                next unless classes.present?
+                  classes = file_classes_extractor.call(file_path:)
+                  next unless classes.present?
 
-                output.add_entry(file_path:, classes:)
+                  output.add_entry(file_path:, classes:)
+                end
+
+                Tailwindcss.compile_css!
               end
 
-              Tailwindcss.compile_css!
+              listener.start
             end
-
-            listener.start
           end
 
-          Dir.glob("#{location}/**/*").each do |file_path|
+          # Use the glob pattern directly if it contains wildcards
+          glob_pattern = if location_str.include?('*')
+            location_str
+          else
+            # If it's a directory, add /**/* to get all files
+            File.directory?(location_str) ? "#{location_str}/**/*" : location_str
+          end
+          
+          Dir.glob(glob_pattern).each do |file_path|
             next unless File.file?(file_path)
 
             classes = file_classes_extractor.call(file_path:)

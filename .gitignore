@@ -11,6 +11,7 @@ yarn.lock
 node_modules/
 tailwind.config.js
 /public
+*.gem
 
 # rspec failure tracking
 .rspec_status

@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "A Ruby wrapper for Tailwind CSS"
   spec.homepage = "https://guilherme-andrade.com/tailwindcss"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 2.5.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/guilherme-andrade/tailwindcss"
@@ -32,5 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "dry-configurable", "~> 1.0"
   spec.add_dependency "dry-initializer", "~> 3.0"
   spec.add_dependency "listen"
-  spec.add_dependency "parser", "~> 3.0"
+  spec.add_dependency "parser", ">= 2.5"
 end
