@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2024-08-18
+
+### Added
+- Magic comment support with `@tw-whitelist` directive for explicit class inclusion
+- Ability to whitelist Tailwind classes that can't be extracted via static analysis
+- Support for magic comments in both Ruby (.rb) and ERB (.erb) files
+- Comprehensive documentation in MAGIC_COMMENTS.md
+
+### Changed
+- File classes extractor now combines AST-extracted classes with magic comment classes
+- This is a minor version bump as it adds new functionality
+
 ## [0.4.3] - 2024-08-18
 
 ### Fixed
