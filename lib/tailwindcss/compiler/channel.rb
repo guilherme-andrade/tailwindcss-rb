@@ -11,13 +11,23 @@ module Tailwindcss
         
         css_path = asset_url_for_css
         begin
+          # Ensure ActionCable has a logger to prevent internal errors
+          # Works with multiple Rails versions (6.0, 6.1, 7.0, 7.1+)
+          if ActionCable.server
+            # Rails 7.1+ uses config.logger
+            if ActionCable.server.config.respond_to?(:logger=) && !ActionCable.server.config.logger
+              ActionCable.server.config.logger = Tailwindcss.logger || Logger.new(nil)
+            # Rails 6.x and 7.0 use server.logger
+            elsif ActionCable.server.respond_to?(:logger=) && !ActionCable.server.logger
+              ActionCable.server.logger = Tailwindcss.logger || Logger.new(nil)
+            end
+          end
+          
           ActionCable.server.broadcast("compiler_channel", {css_path:})
         rescue => e
           # Log the error if logger is available, otherwise silently fail
           # ActionCable might not be fully configured in some environments
-          if Tailwindcss.respond_to?(:logger) && Tailwindcss.logger
-            Tailwindcss.logger.warn "Failed to broadcast CSS change: #{e.message}"
-          end
+          Tailwindcss.log_warn "Failed to broadcast CSS change: #{e.message}"
         end
       end
       

@@ -1,0 +1,13 @@
+<div class="container mx-auto p-8">
+  <h1 class="text-3xl font-bold mb-6">Dynamic Style Page</h1>
+  
+  <div class="<%= @dynamic_style %>">
+    <p>This div has dynamic styles based on URL parameters:</p>
+    <ul class="list-disc ml-6 mt-2">
+      <li>Background: <%= params[:bg] || "gray" %></li>
+      <li>Text: <%= params[:text] || "black" %></li>
+    </ul>
+  </div>
+  
+  <%= link_to "Back to Index", root_path, class: "mt-4 inline-block text-blue-600 hover:underline" %>
+</div>

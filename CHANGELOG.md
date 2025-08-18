@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2024-08-17
+
+### Added
+- Dummy Rails application for integration testing in `spec/dummy_rails_app/`
+- Integration tests for ActionCable, asset pipeline, and compiler
+- Rails as development dependency for testing
+- Support for Rails 6.0+ (was previously Rails 7.0+)
+
+### Fixed
+- ActionCable logger configuration for multiple Rails versions (6.0, 6.1, 7.0, 7.1+)
+- Works with both `ActionCable.server.logger=` (Rails 6.x/7.0) and `ActionCable.server.config.logger=` (Rails 7.1+)
+
 ## [0.3.1] - 2024-08-17
 
 ### Fixed
