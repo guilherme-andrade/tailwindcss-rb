@@ -7,7 +7,7 @@ PATH
       dry-configurable (~> 1.0)
       dry-initializer (~> 3.0)
       listen
-      parser (~> 3.0)
+      parser (>= 2.5)
 
 GEM
   remote: https://rubygems.org/

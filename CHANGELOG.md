@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-08-18
+
+### Added
+- Comprehensive Tailwind CSS configuration options support:
+  - `darkMode` - Configure dark mode strategy ('media', 'class', or false)
+  - `important` - Mark all utilities as !important (boolean or selector string)
+  - `separator` - Customize separator character for modifiers
+  - `safelist` - Array of classes to always include in CSS
+  - `blocklist` - Array of classes to exclude from CSS
+  - `presets` - Array of preset configurations
+  - `plugins` - Array of Tailwind plugins
+  - `corePlugins` - Enable/disable core plugins
+- Proper configuration passing to Tailwind CLI via temporary config files
+- Comprehensive integration test suite for the compiler
+- Test components and ERB templates for Rails integration testing
+- Ruby version compatibility for >= 2.5.0
+
+### Changed
+- Parser gem dependency now supports older Ruby versions (>= 2.5)
+- Improved `compile_css!` method to properly pass all Ruby configuration to Tailwind CLI
+- Enhanced glob pattern handling in Runner and Output classes
+
+### Fixed
+- Fixed prefix duplication issue where classes were being extracted with prefix already applied
+- Fixed Runner not creating .classes files due to glob pattern handling issues
+- Fixed Output class to properly handle glob patterns in content paths
+- Fixed compile_css! not passing configuration to Tailwind CLI
+- Removed .gem files from repository and added to .gitignore
+
 ## [0.3.2] - 2024-08-17
 
 ### Added

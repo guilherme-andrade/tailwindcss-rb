@@ -11,16 +11,11 @@ module Tailwindcss
     extend Dry::Initializer
 
     def call(**style)
-      add_prefix(build_style_prop_classes(style.to_h))
+      # Don't add prefix here - let Tailwind handle it
+      build_style_prop_classes(style.to_h)
     end
 
     private
-
-    def add_prefix(strings)
-      strings.map do |style_prop_class|
-        [Tailwindcss.config.prefix, style_prop_class].compact_blank.join("-")
-      end
-    end
 
     def build_style_prop_classes(style)
       style.flat_map { |(style_prop, value)| classes_for_style_prop(style_prop, value) }
