@@ -16,10 +16,12 @@ module Tailwindcss
       ArbitraryValue.new(value)
     end
 
-    # @param token [String] A value your Tailwindcss.theme.color_scheme keys
+    # @param token [String, Symbol] A value your Tailwindcss.theme.color_scheme keys
     # @param weight [Integer] A value between 100 and 900
     def color_scheme_token(token, weight = 500)
-      color_token(Tailwindcss.theme.color_scheme[token.to_sym], weight)
+      # Ensure token is a symbol (handle both string and integer inputs)
+      token_sym = token.is_a?(Symbol) ? token : token.to_s.to_sym
+      color_token(Tailwindcss.theme.color_scheme[token_sym], weight)
     end
 
     # @param color_token [String] A value your of any of tailwinds color tokens

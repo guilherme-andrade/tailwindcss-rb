@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2024-08-18
+
+### Added
+- Added `extract_classes!` method to force class extraction in production mode
+- Added Rake tasks for easier compilation (`tailwindcss:extract`, `tailwindcss:compile`, `tailwindcss:watch`)
+- Added documentation for production mode usage
+
+### Fixed
+- Fixed `color_scheme_token` helper to handle integer inputs (was causing `undefined method to_sym for Integer` errors)
+- Improved production mode workflow for component libraries
+
 ## [0.4.1] - 2024-08-18
 
 ### Fixed

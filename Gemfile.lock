@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tailwindcss-rb (0.3.2)
+    tailwindcss-rb (0.4.1)
       activesupport (>= 6.0)
       deep_merge (~> 1.0)
       dry-configurable (~> 1.0)

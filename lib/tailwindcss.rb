@@ -85,6 +85,14 @@ module Tailwindcss
 
     Compiler::Runner.new.call
   end
+  
+  def extract_classes!
+    require "tailwindcss/compiler/runner"
+    log_info "Extracting Tailwind classes..."
+    
+    # Force extraction even in production mode
+    Compiler::Runner.new.call
+  end
 
   def resolve_setting(setting)
     setting.respond_to?(:call) ? setting.call : setting
