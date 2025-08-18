@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3] - 2024-08-18
+
+### Fixed
+- Fixed rake tasks not loading environment/configuration in non-Rails projects
+- Tasks now work correctly with Rails apps, Ruby gems/engines, and standalone projects
+- Added automatic environment loading with fallback to common config file locations
+- Improved task output with detailed progress information
+
+### Added
+- Added RAKE_TASKS.md documentation for using rake tasks in different contexts
+- Tasks now show extraction results and output file information
+
 ## [0.4.2] - 2024-08-18
 
 ### Added

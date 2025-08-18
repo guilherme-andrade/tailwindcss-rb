@@ -1,33 +1,26 @@
 # frozen_string_literal: true
 
+# This file provides Rake tasks that work with or without Rails
+
 namespace :tailwindcss do
-  # Define the environment task if it doesn't exist
-  # This allows the gem to work outside of Rails
-  task :environment do
-    # Try to load the app's configuration
-    # This will be overridden by Rails/other frameworks if they define :environment
-    
-    # Look for common initialization files
-    init_files = [
-      "config/environment.rb",      # Rails
-      "config/application.rb",      # Rails without full env
-      "lib/tailwindcss_init.rb",    # Custom initializer
-      "config/tailwindcss.rb",      # Standalone config
-    ]
-    
-    init_files.each do |file|
-      if File.exist?(file)
-        require File.expand_path(file)
-        break
-      end
+  # Helper to load environment if available
+  def load_environment
+    if Rake::Task.task_defined?("environment")
+      Rake::Task["environment"].invoke
+    elsif defined?(Rails)
+      Rails.application.initialize! if Rails.application
+    elsif File.exist?("config/environment.rb")
+      require "./config/environment"
+    elsif File.exist?("lib/view_component_ui.rb")
+      # For gems/engines, load the main file
+      require "view_component_ui"
     end
-    
-    # Also require tailwindcss itself
-    require "tailwindcss"
-  end unless Rake::Task.task_defined?(:environment)
+  end
   
   desc "Extract Tailwind classes from Ruby/ERB files"
-  task :extract => :environment do
+  task :extract do
+    load_environment
+    require "tailwindcss"
     require "tailwindcss/compiler/runner"
     
     puts "Extracting Tailwind classes..."
@@ -40,13 +33,15 @@ namespace :tailwindcss do
     # Show results
     compile_dir = Tailwindcss.resolve_setting(Tailwindcss.config.compiler.compile_classes_dir)
     classes_files = Dir.glob("#{compile_dir}/**/*.classes")
-    puts "Extracted #{classes_files.count} .classes files"
+    puts "Extracted #{classes_files.count} .classes files to #{compile_dir}"
     
     puts "Extraction complete!"
   end
   
   desc "Compile Tailwind CSS (runs extraction first)"
-  task :compile => :environment do
+  task :compile do
+    load_environment
+    require "tailwindcss"
     require "tailwindcss/compiler/runner"
     
     puts "Compiling Tailwind CSS..."
@@ -77,7 +72,9 @@ namespace :tailwindcss do
   end
   
   desc "Watch for changes and recompile"
-  task :watch => :environment do
+  task :watch do
+    load_environment
+    require "tailwindcss"
     require "tailwindcss/compiler/runner"
     
     puts "Watching for changes..."
@@ -91,3 +88,7 @@ namespace :tailwindcss do
     sleep
   end
 end
+
+# Also provide a top-level task for convenience
+desc "Compile Tailwind CSS"
+task :tailwindcss => "tailwindcss:compile"
