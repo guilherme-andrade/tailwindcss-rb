@@ -7,10 +7,18 @@ module Tailwindcss
       end
 
       def self.broadcast_css_changed
-        return unless defined?(ActionCable) && ActionCable.server
+        return unless defined?(ActionCable)
         
-        css_path = asset_url_for_css
         begin
+          # Check if ActionCable server is properly configured
+          return unless ActionCable.server
+          
+          # Early return if ActionCable config is not available
+          # This happens when ActionCable is defined but not configured
+          if ActionCable.server.config.respond_to?(:cable)
+            return unless ActionCable.server.config.cable
+          end
+          
           # Ensure ActionCable has a logger to prevent internal errors
           # Works with multiple Rails versions (6.0, 6.1, 7.0, 7.1+)
           if ActionCable.server
@@ -23,6 +31,7 @@ module Tailwindcss
             end
           end
           
+          css_path = asset_url_for_css
           ActionCable.server.broadcast("compiler_channel", {css_path:})
         rescue => e
           # Log the error if logger is available, otherwise silently fail

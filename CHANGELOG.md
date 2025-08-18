@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2024-08-18
+
+### Fixed
+- Fixed ActionCable broadcast error when cable configuration is not properly loaded
+- Added early return when ActionCable.server.config.cable is nil to prevent fetch errors
+- Improved compatibility with different Rails versions and ActionCable configurations
+- Better error handling for missing or misconfigured cable.yml
+
 ## [0.4.0] - 2024-08-18
 
 ### Added
